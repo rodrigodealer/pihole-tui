@@ -9,8 +9,11 @@ linters:
     - staticcheck
     - unused
     - misspell
-    - gofmt
     - goconst
+
+formatters:
+  enable:
+    - gofmt
 
 linters-settings:
   goconst:
