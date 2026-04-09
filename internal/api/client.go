@@ -289,11 +289,24 @@ func (c *Client) GetDNSRecords() ([]DNSRecord, error) {
 func (c *Client) AddDNSRecord(ip, domain string) error {
 	body := fmt.Sprintf(`{"host":"%s %s"}`, ip, domain)
 	_, err := c.doRequest("PUT", "/config/dns/hosts", strings.NewReader(body))
-	return err
+	if err != nil {
+		return err
+	}
+	c.RestartDNS()
+	return nil
 }
 
 func (c *Client) RemoveDNSRecord(ip, domain string) error {
 	body := fmt.Sprintf(`{"host":"%s %s"}`, ip, domain)
 	_, err := c.doRequest("DELETE", "/config/dns/hosts", strings.NewReader(body))
+	if err != nil {
+		return err
+	}
+	c.RestartDNS()
+	return nil
+}
+
+func (c *Client) RestartDNS() error {
+	_, err := c.doRequest("POST", "/action/restartdns", nil)
 	return err
 }

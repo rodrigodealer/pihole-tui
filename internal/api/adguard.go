@@ -284,6 +284,11 @@ func (c *AdGuardClient) Disable(seconds int) error {
 	return err
 }
 
+func (c *AdGuardClient) RestartDNS() error {
+	// AdGuard applies changes immediately, no restart needed
+	return nil
+}
+
 func (c *AdGuardClient) UpdateGravity() error {
 	_, err := c.doRequest("POST", "/filtering/refresh", strings.NewReader(`{"whitelist":false}`))
 	return err

@@ -17,5 +17,6 @@ type Provider interface {
 	Enable() error
 	Disable(seconds int) error
 	UpdateGravity() error
+	RestartDNS() error
 	Name() string
 }
