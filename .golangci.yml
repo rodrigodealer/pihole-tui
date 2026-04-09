@@ -3,7 +3,6 @@ version: "2"
 linters:
   enable:
     - errcheck
-    - gosimple
     - govet
     - ineffassign
     - staticcheck
@@ -22,6 +21,3 @@ linters-settings:
 
 run:
   timeout: 5m
-
-issues:
-  exclude-use-default: false
