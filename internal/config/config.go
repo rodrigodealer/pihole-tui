@@ -7,8 +7,10 @@ import (
 )
 
 type Config struct {
+	Type     string `json:"type"`
 	Host     string `json:"host"`
 	Password string `json:"password"`
+	Username string `json:"username"`
 }
 
 func DefaultPath() string {
@@ -21,13 +23,16 @@ func Load() (*Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return &Config{Host: "http://192.168.0.70"}, nil
+			return &Config{Type: "pihole", Host: "http://192.168.0.70"}, nil
 		}
 		return nil, err
 	}
 	var cfg Config
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		return nil, err
+	}
+	if cfg.Type == "" {
+		cfg.Type = "pihole"
 	}
 	return &cfg, nil
 }

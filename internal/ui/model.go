@@ -27,7 +27,7 @@ const (
 )
 
 type Model struct {
-	client     *api.Client
+	client     api.Provider
 	view       view
 	cursor     int
 	summary    *api.Summary
@@ -57,7 +57,7 @@ type actionMsg string
 type errMsg error
 type tickMsg time.Time
 
-func NewModel(client *api.Client) Model {
+func NewModel(client api.Provider) Model {
 	ti := textinput.New()
 	ti.Placeholder = "example.com"
 	ti.CharLimit = 253

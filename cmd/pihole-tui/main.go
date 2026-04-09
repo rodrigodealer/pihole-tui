@@ -32,15 +32,22 @@ func main() {
 		cfg.Host = "http://192.168.0.70"
 	}
 
-	client := api.NewClient(cfg.Host, cfg.Password)
+	var provider api.Provider
 
-	if cfg.Password != "" {
-		if err := client.Authenticate(); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: authentication failed: %v\n", err)
+	switch cfg.Type {
+	case "adguard":
+		provider = api.NewAdGuardClient(cfg.Host, cfg.Username, cfg.Password)
+	default:
+		client := api.NewClient(cfg.Host, cfg.Password)
+		if cfg.Password != "" {
+			if err := client.Authenticate(); err != nil {
+				fmt.Fprintf(os.Stderr, "Warning: authentication failed: %v\n", err)
+			}
 		}
+		provider = client
 	}
 
-	m := ui.NewModel(client)
+	m := ui.NewModel(provider)
 	p := tea.NewProgram(m, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)

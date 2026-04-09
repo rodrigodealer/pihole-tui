@@ -253,6 +253,8 @@ func (c *Client) UpdateGravity() error {
 	return err
 }
 
+func (c *Client) Name() string { return "pihole" }
+
 type DNSRecord struct {
 	IP     string `json:"ip"`
 	Domain string `json:"domain"`
