@@ -252,3 +252,46 @@ func (c *Client) UpdateGravity() error {
 	_, err := c.doRequest("POST", "/action/gravity", nil)
 	return err
 }
+
+type DNSRecord struct {
+	IP     string `json:"ip"`
+	Domain string `json:"domain"`
+}
+
+func (c *Client) GetDNSRecords() ([]DNSRecord, error) {
+	data, err := c.doRequest("GET", "/config/dns/hosts", nil)
+	if err != nil {
+		return nil, err
+	}
+	var result struct {
+		Hosts []string `json:"hosts"`
+	}
+	if err := json.Unmarshal(data, &result); err != nil {
+		// try as direct array
+		var hosts []string
+		if err2 := json.Unmarshal(data, &hosts); err2 != nil {
+			return nil, err
+		}
+		result.Hosts = hosts
+	}
+	records := make([]DNSRecord, 0, len(result.Hosts))
+	for _, h := range result.Hosts {
+		parts := strings.SplitN(h, " ", 2)
+		if len(parts) == 2 {
+			records = append(records, DNSRecord{IP: parts[0], Domain: parts[1]})
+		}
+	}
+	return records, nil
+}
+
+func (c *Client) AddDNSRecord(ip, domain string) error {
+	body := fmt.Sprintf(`{"host":"%s %s"}`, ip, domain)
+	_, err := c.doRequest("PUT", "/config/dns/hosts", strings.NewReader(body))
+	return err
+}
+
+func (c *Client) RemoveDNSRecord(ip, domain string) error {
+	body := fmt.Sprintf(`{"host":"%s %s"}`, ip, domain)
+	_, err := c.doRequest("DELETE", "/config/dns/hosts", strings.NewReader(body))
+	return err
+}
