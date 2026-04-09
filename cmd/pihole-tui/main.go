@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -10,7 +11,17 @@ import (
 	"github.com/rodrigodealer/pihole-tui/internal/ui"
 )
 
+var version = "dev"
+
 func main() {
+	showVersion := flag.Bool("version", false, "print version")
+	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("pihole-tui", version)
+		return
+	}
+
 	cfg, err := config.Load()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to load config: %v\n", err)

@@ -1,0 +1,42 @@
+version: 2
+
+builds:
+  - main: ./cmd/pihole-tui
+    binary: pihole-tui
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+brews:
+  - repository:
+      owner: rodrigodealer
+      name: homebrew-tap
+    homepage: https://github.com/rodrigodealer/pihole-tui
+    description: TUI for managing Pi-hole remotely
+    license: MIT
+    install: |
+      bin.install "pihole-tui"
+    test: |
+      system "#{bin}/pihole-tui", "--version"
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^ci:"
+      - "^test:"
